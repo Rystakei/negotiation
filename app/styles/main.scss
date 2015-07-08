@@ -1,0 +1,47 @@
+$icon-font-path: "../bower_components/bootstrap-sass-official/assets/fonts/bootstrap/";
+// bower:scss
+@import "bootstrap-sass-official/assets/stylesheets/_bootstrap.scss";
+// endbower
+
+@import url(http://fonts.googleapis.com/css?family=Maven+Pro);
+@import url(http://fonts.googleapis.com/css?family=Josefin+Sans);
+
+
+* {
+  letter-spacing: 0.050em;
+  font-family: 'Maven Pro';
+}
+
+body {
+  position: relative;
+}
+
+h1,h3,h4 {
+  font-family: 'Josefin Sans';
+}
+
+p,p b {
+  font-size: 24px;
+  letter-spacing: 0.040em;
+  line-height: 1.25;
+  font-family: 'Maven Pro';
+}
+
+.title {
+  text-align: center;
+}
+
+h1.title {
+  padding-bottom: 50px;
+}
+
+.header {
+  padding-bottom: 10%;
+}
+
+.ct-chart .ct-label.ct-horizontal {
+  color: #333;
+  fill: #333;
+  font-size: 1.75em;
+}
+
