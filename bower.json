@@ -6,5 +6,8 @@
     "select2": "~4.0.0",
     "chartist": "~0.9.1",
     "chartist-plugin-tooltip": "~0.0.10"
+  },
+  "resolutions": {
+    "chartist": "~0.9.1"
   }
 }

@@ -12,21 +12,24 @@ var data = {
   ]
 };
 
+var negotiationChart;
+
 function fakeData() {
 	var salaries = [];
-	var startingAge = 22;
-	var retirementAge = 65; 
+	var startingAge = Number($('.start-age input').val());
+	var retirementAge = Number($('.retirement-age input').val()); 
 	var workingYears = retirementAge - startingAge;
-	var startingSalary = 50000;
-	var years = 10,
-		negotiatedIncrease = 0.15,
-		costOfLivingIncrease = 0.03;
+	var startingSalary = Number($('.starting-salary input').val()),
+    jobChangeRate = Number($('.change-rate input').val()),
+		negotiatedIncrease = Number($('.negotiation-percentage input').val())/100,
+		costOfLivingIncrease =  0.03,
+    currentSalary;
 
-	for (i = 0; i < workingYears; i++) {
+	for (var i = 0; i < workingYears; i++) {
 		if (i === 0) {
 			currentSalary = startingSalary;
 		} 
-		else if (i % 3 === 0) {
+		else if (i % jobChangeRate === 0) {
 			console.log("Whoo hoo new job");
 			currentSalary = currentSalary + currentSalary * negotiatedIncrease;
 		} 
@@ -115,7 +118,7 @@ function addChart() {
     ]
   ];
 
-  chart = new Chartist.Line('.ct-chart', {
+  negotiationChart = new Chartist.Line('.ct-chart', {
   labels: series,
   series: [
     // series,
@@ -132,3 +135,19 @@ function addChart() {
 }
 
 addChart();
+
+
+$('input').on('blur', function() {
+  var that = this,
+      modifiedSeries= fakeData();
+
+
+      var data = {
+  // A labels array that can contain any sort of values
+  // Our series array that contains series objects or in this case series data arrays
+  labels: modifiedSeries,
+  series: [modifiedSeries]
+};
+  
+  negotiationChart.update({labels: modifiedSeries, series: [modifiedSeries]});
+});
