@@ -14,71 +14,92 @@ var data = {
 
 var negotiationChart;
 
-function fakeData() {
-	var salaries = [];
-	var startingAge = Number($('.start-age input').val());
-	var retirementAge = Number($('.retirement-age input').val()); 
-	var workingYears = retirementAge - startingAge;
-	var startingSalary = Number($('.starting-salary input').val()),
-    jobChangeRate = Number($('.change-rate input').val()),
-		negotiatedIncrease = Number($('.negotiation-percentage input').val())/100,
-		costOfLivingIncrease =  0.03,
-    currentSalary;
+// function fakeData() {
+// 	var salaries = [];
+// 	var startingAge = Number($('.start-age input').val());
+// 	var retirementAge = Number($('.retirement-age input').val()); 
+// 	var workingYears = retirementAge - startingAge;
+// 	var startingSalary = Number($('.starting-salary input').val()),
+//     jobChangeRate = Number($('.change-rate input').val()),
+// 		negotiatedIncrease = Number($('.negotiation-percentage input').val())/100,
+// 		costOfLivingIncrease =  0.03,
+//     currentSalary;
 
-	for (var i = 0; i < workingYears; i++) {
-		if (i === 0) {
-			currentSalary = startingSalary;
-		} 
-		else if (i % jobChangeRate === 0) {
-			console.log("Whoo hoo new job");
-			currentSalary = currentSalary + currentSalary * negotiatedIncrease;
-		} 
-		else {
-			currentSalary = currentSalary + currentSalary * costOfLivingIncrease;
-		}
-		console.log("currentSalary", currentSalary);
-		if (i === 0 || i % 5) {		
-			salaries.push(currentSalary);
-		}
-	}
-	console.log(salaries, salaries.length);
-	return salaries;
+// 	for (var i = 0; i < workingYears; i++) {
+// 		if (i === 0) {
+// 			currentSalary = startingSalary;
+// 		} 
+// 		else if (i % jobChangeRate === 0) {
+// 			console.log("Whoo hoo new job");
+// 			currentSalary = currentSalary + currentSalary * negotiatedIncrease;
+// 		} 
+// 		else {
+// 			currentSalary = currentSalary + currentSalary * costOfLivingIncrease;
+// 		}
+// 		console.log("currentSalary", currentSalary);
+// 		if (i === 0 || i % 5) {		
+// 			salaries.push(currentSalary);
+// 		}
+// 	}
+// 	console.log(salaries, salaries.length);
+// 	return salaries;
+// }
+
+// function fakeFlatData() {
+// 	var salaries = [];
+// 	var startingAge = 22;
+// 	var retirementAge = 65; 
+// 	var workingYears = retirementAge - startingAge;
+// 	var startingSalary = 50000;
+// 	var years = 10,
+// 		negotiatedIncrease = 0.15,
+// 		costOfLivingIncrease = 0.03;
+
+// 	for (i = 0; i < workingYears; i++) {
+// 		if (i === 0) {
+// 			currentSalary = startingSalary;
+// 		} 
+// 		else {
+// 			currentSalary = currentSalary + currentSalary * costOfLivingIncrease;
+// 		}
+// 		console.log("currentSalary", currentSalary);
+// 		if (i === 0 || i % 5) {		
+// 			salaries.push(currentSalary);
+// 		}
+// 	}
+// 	console.log(salaries, salaries.length);
+// 	return salaries;
+
+// }
+// var series = fakeData();
+// var flatSeries = fakeFlatData();
+
+// var data = {
+//   // A labels array that can contain any sort of values
+//   // Our series array that contains series objects or in this case series data arrays
+//   series: [series]
+// };
+
+var femaleSeries = createData(30000).salaries,
+    maleSeries = createData(35000).salaries,
+    labels = createData(300000).labels;
+
+function createData(startingSalary) {
+  var workingYears = 65 - 22,
+      currentSalary = startingSalary,
+      salaries = [],
+      labels = [];
+
+  for (i = 0; i < workingYears; i++) {
+    currentSalary = currentSalary * 1.03;
+    if (i % 10 === 0) {
+      labels.push(22 + i);
+      salaries.push(currentSalary);
+    }
+  }
+  var salaryData = {labels: labels, salaries: salaries};
+  return salaryData;
 }
-
-function fakeFlatData() {
-	var salaries = [];
-	var startingAge = 22;
-	var retirementAge = 65; 
-	var workingYears = retirementAge - startingAge;
-	var startingSalary = 50000;
-	var years = 10,
-		negotiatedIncrease = 0.15,
-		costOfLivingIncrease = 0.03;
-
-	for (i = 0; i < workingYears; i++) {
-		if (i === 0) {
-			currentSalary = startingSalary;
-		} 
-		else {
-			currentSalary = currentSalary + currentSalary * costOfLivingIncrease;
-		}
-		console.log("currentSalary", currentSalary);
-		if (i === 0 || i % 5) {		
-			salaries.push(currentSalary);
-		}
-	}
-	console.log(salaries, salaries.length);
-	return salaries;
-
-}
-var series = fakeData();
-var flatSeries = fakeFlatData();
-
-var data = {
-  // A labels array that can contain any sort of values
-  // Our series array that contains series objects or in this case series data arrays
-  series: [series]
-};
 
 
 function addChart() {
@@ -119,10 +140,10 @@ function addChart() {
   ];
 
   negotiationChart = new Chartist.Line('.ct-chart', {
-  labels: series,
+  labels: labels,
   series: [
-    // series,
-    flatSeries
+    femaleSeries,
+    maleSeries
   ]
 }, {
   fullWidth: true,
@@ -137,7 +158,30 @@ function addChart() {
 addChart();
 
 
-$('input').on('blur', function() {
+$(window).bind('scroll', function() {
+
+        if($(window).scrollTop() >= $('.intro-employees').offset().top + $('.intro-employees').outerHeight() - window.innerHeight) {
+          $('.employees-container').removeClass('fixed-item', 500);
+          console.log("remove fixed");
+        }
+
+        if($(window).scrollTop() <= $('.intro-employees').offset().top + $('.intro-employees').outerHeight() - window.innerHeight) {
+          $('.employees-container').addClass('fixed-item', 500);
+        }
+
+
+        if($(window).scrollTop() >= $('.question').offset().top + $('.question').outerHeight() - window.innerHeight) {
+          $('.employees-container').removeClass('fixed-item', 500);
+        }
+
+        if($(window).scrollTop() <= $('.question').offset().top + $('.question').outerHeight() - window.innerHeight) {
+          $('.employees-container').addClass('fixed-item', 500);
+        }
+});
+
+
+
+$('input').on('keyup', function() {
   var that = this,
       modifiedSeries= fakeData();
 
@@ -148,6 +192,6 @@ $('input').on('blur', function() {
   labels: modifiedSeries,
   series: [modifiedSeries]
 };
-  
+  console.log("updating..");
   negotiationChart.update({labels: modifiedSeries, series: [modifiedSeries]});
 });

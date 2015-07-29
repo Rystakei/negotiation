@@ -49,3 +49,29 @@ h1.title {
   font-size: 1.75em;
 }
 
+.ratio-chart, #income-chart {
+  height: 300px;
+}
+
+.after section {
+  height: 400px; 
+
+}
+
+
+.employees-container {
+  padding-top: 100px;
+  padding-bottom: 250px;
+
+  img {
+    height: 200px;
+  }
+}
+.chart-time {
+}
+
+.fixed-item {
+  position: fixed;
+  top: 50%;
+  left: 35%;
+}
