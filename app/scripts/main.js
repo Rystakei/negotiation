@@ -159,6 +159,16 @@ addChart();
 
 
 $(window).bind('scroll', function() {
+      console.log("scrollTop: ", $(document).scrollTop());
+
+      if($(document).scrollTop() > 100){
+        $('.intro-employees').show();
+        $('.starting-salary').hide();
+    
+      } else {
+          $('.intro-employees').hide();
+          $('.starting-salary').show();
+      }
 
         if($(window).scrollTop() >= $('.intro-employees').offset().top + $('.intro-employees').outerHeight() - window.innerHeight) {
           $('.employees-container').removeClass('fixed-item', 500);
