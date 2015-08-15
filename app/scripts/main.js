@@ -80,6 +80,37 @@ var negotiationChart;
 //   series: [series]
 // };
 
+function getEarningsDifference(salary1, salary2, years) {
+  var totalSalary1 = getLifetimeEarnings(salary1,years),
+    totalSalary2 = getLifetimeEarnings(salary2,years);
+
+    return accounting.formatMoney(totalSalary1 - totalSalary2); 
+}
+
+$('.same-job-ten-years .total-earnings').append(getEarningsDifference(45000,40000,10));
+
+$('.same-job-different-salary .total-earnings').append(getEarningsDifference(45000,40000,42));
+
+
+function getLifetimeEarnings(salary, years) {
+  lifetimeEarnings = [salary];
+  counter = 0;
+
+  while (counter < years -1) {
+    lastSalary = lifetimeEarnings[lifetimeEarnings.length-1];
+    lifetimeEarnings.push(lastSalary + lastSalary * .03);
+    counter++;
+    console.log(counter);
+  }
+  var totalLifetimeEarnings = _.reduce(lifetimeEarnings, function(memo, num){
+    return memo + num;
+  });
+  console.log("lifetimeEarnings", totalLifetimeEarnings);
+
+  return totalLifetimeEarnings;
+}
+
+
 var femaleSeries = createData(30000).salaries,
     maleSeries = createData(35000).salaries,
     labels = createData(300000).labels;
@@ -157,35 +188,135 @@ function addChart() {
 
 addChart();
 
+function formatEarningsOverTime(salary, years) {
+  return accounting.formatMoney(getLifetimeEarnings(salary, years));
+}
+
+var msEarnings = {decade: formatEarningsOverTime(40000, 10), lifetime: formatEarningsOverTime(40000, 42)};
+var mrEarnings = {decade: formatEarningsOverTime(45000, 10), lifetime: formatEarningsOverTime(45000, 42)};
+
+console.log('ms: ', msEarnings.decade, 'mr: ', mrEarnings.decade);
+
+
+function updateEarnings(employeeSelector, animationSelector, updatedEarnings) {
+  $(employeeSelector).text(updatedEarnings);
+
+  if (!$(employeeSelector).hasClass(animationSelector)) {
+    $(employeeSelector).animateCSS('bounce')
+                       .addClass(animationSelector)
+                       .css('color', 'green');
+  }
+}
 
 $(window).bind('scroll', function() {
-      console.log("scrollTop: ", $(document).scrollTop());
+      // console.log("scrollTop: ", $(document).scrollTop());
+      // console.log("image top:", $('img').first().offset().top);
+      // console.log("starting salary top: ", $('.starting-salary').offset().top);
 
-      if($(document).scrollTop() > 100){
-        $('.intro-employees').show();
-        $('.starting-salary').hide();
-    
-      } else {
-          $('.intro-employees').hide();
-          $('.starting-salary').show();
+      var section = $('.intro-employees'),
+          section2 = $('.starting-salary'),
+          section3 = $('.man-negotiates'),
+          section4 = $('.same-job-ten-years'),
+          section5 = $('.same-job-different-salary'),
+          section6 = $('.question'),
+          chartTime = $('.chart-time'),
+          employees = $('img'),
+          employeesPosition = employees.first().offset().top;
+
+      // console.log("section2", section2.first().offset().top, "image", $('img').first().offset().top);
+
+      console.log("3:", section3.first().offset().top, "employeesPosition", employeesPosition, "4:", section4.first().offset().top);
+
+      if (employeesPosition > section.first().offset().top && employeesPosition < section2.first().offset().top) {
+        $('section').css('visibility', 'hidden');
+        section.css('visibility', 'visible');
       }
 
-        if($(window).scrollTop() >= $('.intro-employees').offset().top + $('.intro-employees').outerHeight() - window.innerHeight) {
-          $('.employees-container').removeClass('fixed-item', 500);
-          console.log("remove fixed");
-        }
+      else if (employeesPosition > section2.first().offset().top && employeesPosition < section3.first().offset().top) {
+        $('section').css('visibility', 'hidden');
+        section2.css('visibility', 'visible');
+        $('.ms-salary').text('$40,000').css('color', 'black').removeClass('activated-animation-1 activated-animation-2 activated-animation-3');
+        $('.mr-salary').text('$40,000').css('color', 'black').removeClass('activated-animation-1 activated-animation-2 activated-animation-3');
+      }
 
-        if($(window).scrollTop() <= $('.intro-employees').offset().top + $('.intro-employees').outerHeight() - window.innerHeight) {
-          $('.employees-container').addClass('fixed-item', 500);
-        }
+
+      else if (employeesPosition > section3.first().offset().top && employeesPosition < section4.first().offset().top) {
+        console.log("Man negotiates!");
+        $('section').css('visibility', 'hidden');
+        section3.css('visibility', 'visible');
+
+
+        updateEarnings('.mr-salary', 'activated-animation-1', '$44,000');
+      }
+
+
+      else if (employeesPosition > section4.first().offset().top && employeesPosition < section5.first().offset().top) {
+        console.log("starting1");
+        $('section').css('visibility', 'hidden');
+        section4.css('visibility', 'visible');
+
+        updateEarnings('.mr-salary', 'activated-animation-2', mrEarnings.decade);
+        updateEarnings('.ms-salary', 'activated-animation-2', msEarnings.decade);
+
+        $('.mr-salary').text(mrEarnings.decade);
+
+      }
+
+
+      else if (employeesPosition > section5.first().offset().top && employeesPosition < section6.first().offset().top) {
+        console.log("starting");
+        $('section').css('visibility', 'hidden');
+        section5.css('visibility', 'visible');
+        // $('.mr-salary').text('$40,000').css('color', 'black').removeClass('activated-animation');
+        $('.mr-salary').text(mrEarnings.lifetime);
+
+        updateEarnings('.mr-salary', 'activated-animation-3', mrEarnings.lifetime);
+        updateEarnings('.ms-salary', 'activated-animation-3', msEarnings.lifetime);
+      }
+
+
+
+
+      // else if (employeesPosition > section4.first().offset().top && employeesPosition < sectionfirst().offset().top) {
+      //   $('section').css('visibility', 'hidden');
+      //   section4.css('visibility', 'visible');
+
+      // }
+
+
+
+      // if($(document).scrollTop() > 0 && $(document).scrollTop < $('.starting-salary').offset().top) {
+      //   // $('section').hide();
+      //   console.log("hide?");
+      //   // $('body').hide();
+      //   $('.intro-employees').css('visibility', 'visible');
+      // } else if( $(document).scrollTop() > $('.starting-salary').offset().top  && $(document).scrollTop() < $('.man-negotiates').offset().top + 300) {
+      //   console.log("starting salary visible");
+      //   $('section').css('visibility', 'hidden');
+      //   $('.starting-salary').css('visibility', 'visible');
+
+      // } else {
+      //     // $('section').hide();
+      //     $('.starting-salary').css('visibility', 'hidden');
+      //     $('.man-negotiates').css('visibility', 'visible');
+      // }
+
+        // if($(window).scrollTop() >= $('.intro-employees').offset().top + $('.intro-employees').outerHeight() - window.innerHeight) {
+        //   $('.employees-container').removeClass('fixed-item', 500);
+        //   console.log("remove fixed");
+        // }
+
+        // if($(window).scrollTop() <= $('.intro-employees').offset().top + $('.intro-employees').outerHeight() - window.innerHeight) {
+        //   $('.employees-container').addClass('fixed-item', 500);
+        // }
 
 
         if($(window).scrollTop() >= $('.question').offset().top + $('.question').outerHeight() - window.innerHeight) {
-          $('.employees-container').removeClass('fixed-item', 500);
+          // $('.employees-container').removeClass('fixed-item', 500);
         }
 
         if($(window).scrollTop() <= $('.question').offset().top + $('.question').outerHeight() - window.innerHeight) {
-          $('.employees-container').addClass('fixed-item', 500);
+          // $('.employees-container').addClass('fixed-item', 500);
         }
 });
 
