@@ -91,6 +91,41 @@ $('.same-job-ten-years .total-earnings').append(getEarningsDifference(45000,4000
 
 $('.same-job-different-salary .total-earnings').append(getEarningsDifference(45000,40000,42));
 
+$('.changing-jobs .total-earnings').append(getEarningsDifferenceWithSwitches(45000, 40000, 42));
+
+function getEarningsDifferenceWithSwitches(salary1, salary2, years, frequency, negotiatedPercentage) {
+  var totalSalary1 = getLifetimeEarningsFromSwitching(salary1,years),
+    totalSalary2 = getLifetimeEarningsFromSwitching(salary2,years);
+
+    return accounting.formatMoney(totalSalary1 - totalSalary2); 
+}
+
+function getLifetimeEarningsFromSwitching(salary, years, frequency, negotiatedPercentage) {
+  lifetimeEarnings = [salary];
+  counter = 0;
+
+  while (counter < years -1) {
+    lastSalary = lifetimeEarnings[lifetimeEarnings.length-1];
+    if (counter % 3 == 0) {
+      var newJobSalary = lastSalary + lastSalary * .1;
+      if (negotiatedPercentage) {
+        newJobSalary = newJobSalary * negotiatedPercentage;
+      }
+      lifetimeEarnings.push(newJobSalary);
+    }
+    else {
+      lifetimeEarnings.push(lastSalary + lastSalary * .03);
+    }
+    counter++;
+    console.log(counter);
+  }
+  var totalLifetimeEarnings = _.reduce(lifetimeEarnings, function(memo, num){
+    return memo + num;
+  });
+  console.log("lifetimeEarnings", totalLifetimeEarnings);
+
+  return totalLifetimeEarnings;
+}
 
 function getLifetimeEarnings(salary, years) {
   lifetimeEarnings = [salary];
@@ -192,8 +227,16 @@ function formatEarningsOverTime(salary, years) {
   return accounting.formatMoney(getLifetimeEarnings(salary, years));
 }
 
-var msEarnings = {decade: formatEarningsOverTime(40000, 10), lifetime: formatEarningsOverTime(40000, 42)};
-var mrEarnings = {decade: formatEarningsOverTime(45000, 10), lifetime: formatEarningsOverTime(45000, 42)};
+function formatEarningsWithChangesOverTime(salary, years) {
+  return accounting.formatMoney(getLifetimeEarningsFromSwitching(salary, years));
+}
+
+var msEarnings = {decade: formatEarningsOverTime(40000, 10),
+                  lifetime: formatEarningsOverTime(40000, 42),
+                  lifetimeChanges: formatEarningsWithChangesOverTime(40000, 42)};
+var mrEarnings = {decade: formatEarningsOverTime(45000, 10),
+                  lifetime: formatEarningsOverTime(45000, 42),
+                  lifetimeChanges: formatEarningsWithChangesOverTime(45000, 42)};
 
 console.log('ms: ', msEarnings.decade, 'mr: ', mrEarnings.decade);
 
@@ -218,7 +261,8 @@ $(window).bind('scroll', function() {
           section3 = $('.man-negotiates'),
           section4 = $('.same-job-ten-years'),
           section5 = $('.same-job-different-salary'),
-          section6 = $('.question'),
+          section6 = $('.changing-jobs'),
+          section7 = $('.question'),
           chartTime = $('.chart-time'),
           employees = $('img'),
           employeesPosition = employees.first().offset().top;
@@ -264,7 +308,6 @@ $(window).bind('scroll', function() {
 
 
       else if (employeesPosition > section5.first().offset().top && employeesPosition < section6.first().offset().top) {
-        console.log("starting");
         $('section').css('visibility', 'hidden');
         section5.css('visibility', 'visible');
         // $('.mr-salary').text('$40,000').css('color', 'black').removeClass('activated-animation');
@@ -273,6 +316,22 @@ $(window).bind('scroll', function() {
         updateEarnings('.mr-salary', 'activated-animation-3', mrEarnings.lifetime);
         updateEarnings('.ms-salary', 'activated-animation-3', msEarnings.lifetime);
       }
+
+      else if (employeesPosition > section6.first().offset().top + 100 && employeesPosition < section7.first().offset().top) {
+        console.log("starting");
+        $('section').css('visibility', 'hidden');
+        section6.css('visibility', 'visible');
+
+        updateEarnings('.mr-salary', 'activated-animation-4', mrEarnings.lifetimeChanges);
+        updateEarnings('.ms-salary', 'activated-animation-4', msEarnings.lifetimeChanges);
+      }
+
+      // else {
+      //   $('.fixed-item').removeClass('fixed-item');
+      //   $('.fixed-heading').removeClass('fixed-heading');
+      // }
+      
+
 
 
 
