@@ -270,6 +270,13 @@ $(window).bind('scroll', function() {
       // console.log("section2", section2.first().offset().top, "image", $('img').first().offset().top);
 
       console.log("3:", section3.first().offset().top, "employeesPosition", employeesPosition, "4:", section4.first().offset().top);
+      if ($('document').scrollTop() < $('.row.marketing').first().offset().top ) {
+        alert("hi!");
+        $('.em-heading').addClass('fixed-heading');
+      }
+      else {
+        $('.em-heading').removeClass('fixed-heading');
+      }
 
       if (employeesPosition > section.first().offset().top && employeesPosition < section2.first().offset().top) {
         $('section').css('visibility', 'hidden');
@@ -330,7 +337,7 @@ $(window).bind('scroll', function() {
       //   $('.fixed-item').removeClass('fixed-item');
       //   $('.fixed-heading').removeClass('fixed-heading');
       // }
-      
+
 
 
 
